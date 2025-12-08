@@ -1,63 +1,136 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <title>總統大選總統大選投票</title>
-    <style>
-        body {
-            font-family: Arial;
-            padding: 40px;
-            background: #f0f0f0;
-        }
-        .box {
-            width: 350px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-        }
-        button {
-            padding: 10px 20px;
-            border: none;
-            background: #3498db;
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        button:hover {
-            background: #2980b9;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>投票頁</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f0f4ff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .container {
+        background: white;
+        padding: 25px 40px;
+        border-radius: 12px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+    }
+
+    h2 {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        font-size: 18px;
+        margin: 10px 0;
+        cursor: pointer;
+    }
+
+    input[type="radio"] {
+        margin-right: 10px;
+        transform: scale(1.2);
+        vertical-align: middle;
+    }
+
+    button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        background-color: #4e7cff;
+        color: white;
+    }
+
+    button:hover {
+        background-color: #3461c9;
+    }
+
+    .btn-secondary {
+        background-color: #95a5a6;
+        margin-left: 10px;
+    }
+
+    .btn-secondary:hover {
+        background-color: #7f8c8d;
+    }
+</style>
 </head>
 <body>
 
-<div class="box">
-    <h2>請選擇投票項目</h2>
-    <label><input type="radio" name="vote" value="A"> 韓國瑜</label><br>
-    <label><input type="radio" name="vote" value="B"> 蔡英文</label><br>
-    <label><input type="radio" name="vote" value="C"> 宋楚瑜</label><br>
+<div class="container">
+    <h2>投票頁</h2>
+    <p id="student"></p>
 
-    <button onclick="submitVote()">提交</button>
-    <br><br>
-    <button onclick="location.href='index.html'">⬅ 回登入頁</button>
+    <form id="voteForm">
+        <label><input type="radio" name="vote" value="A"> 韓國瑜</label>
+        <label><input type="radio" name="vote" value="B"> 蔡英文</label>
+        <label><input type="radio" name="vote" value="C"> 宋楚瑜</label>
+        <button type="button" onclick="submitVote()">提交投票</button>
+    </form>
+
+    <button class="btn-secondary" onclick="location.href='index.html'">⬅ 回登入頁</button>
 </div>
 
 <script>
-function submitVote() {
-    const vote = document.querySelector('input[name="vote"]:checked');
-    if (!vote) {
-        alert("請先選擇一個選項！");
-        return;
+    // 檢查是否登入
+    const studentID = localStorage.getItem("studentID");
+    if (!studentID) {
+        alert("請先登入！");
+        window.location.href = "index.html";
+    } else {
+        document.getElementById("student").innerText = "學號：" + studentID;
     }
 
-    localStorage.setItem("voteResult", vote.value);
-    window.location.href = "result.html";
-}
+    function submitVote() {
+        const vote = document.querySelector('input[name="vote"]:checked');
+        if (!vote) {
+            alert("請先選擇候選人！");
+            return;
+        }
+
+        // 防止同一學號重複投票
+        if (localStorage.getItem("voted_" + studentID)) {
+            alert("你已經投過票！");
+            return;
+        }
+
+        // 讀取現有票數
+        let countA = parseInt(localStorage.getItem("countA") || 0);
+        let countB = parseInt(localStorage.getItem("countB") || 0);
+        let countC = parseInt(localStorage.getItem("countC") || 0);
+
+        // 更新票數
+        if (vote.value === "A") countA += 1;
+        if (vote.value === "B") countB += 1;
+        if (vote.value === "C") countC += 1;
+
+        localStorage.setItem("countA", countA);
+        localStorage.setItem("countB", countB);
+        localStorage.setItem("countC", countC);
+
+        // 記錄學號已投票
+        localStorage.setItem("voted_" + studentID, "true");
+
+        // 記錄個人投票結果
+        localStorage.setItem("voteResult", vote.value);
+
+        // 導向結果頁
+        window.location.href = "result.html";
+    }
 </script>
 
 </body>
 </html>
-
-
-
