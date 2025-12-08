@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>總統大選總統大選投票</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 40px;
+            background: #f0f0f0;
+        }
+        .box {
+            width: 350px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            background: #3498db;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>請選擇投票項目</h2>
+    <label><input type="radio" name="vote" value="A"> 韓國瑜</label><br>
+    <label><input type="radio" name="vote" value="B"> 蔡英文</label><br>
+    <label><input type="radio" name="vote" value="C"> 宋楚瑜</label><br>
+
+    <button onclick="submitVote()">提交</button>
+    <br><br>
+    <button onclick="location.href='login.html'">⬅ 回登入頁</button>
+</div>
+
+<script>
+function submitVote() {
+    const vote = document.querySelector('input[name="vote"]:checked');
+    if (!vote) {
+        alert("請先選擇一個選項！");
+        return;
+    }
+
+    localStorage.setItem("voteResult", vote.value);
+    window.location.href = "result.html";
+}
+</script>
+
+</body>
+</html>
+
+
+

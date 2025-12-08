@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>投票結果</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #eef2ff;
+            text-align: center;
+            padding-top: 80px;
+        }
+        .box {
+            width: 360px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.15);
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            background: #4e7cff;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background: #3b64cc;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>投票完成！</h2>
+    <p id="student"></p>
+    <p id="result"></p>
+
+    <button onclick="location.href='vote.html'">⬅ 回投票頁</button>
+    <button onclick="location.href='login.html'">⬅ 回登入頁</button>
+</div>
+
+<script>
+// ---- 檢查是否有登入 ----
+const studentID = localStorage.getItem("studentID");
+if (!studentID) {
+    alert("尚未登入，請重新登入！");
+    window.location.href = "login.html";
+}
+
+// ---- 顯示學號 ----
+document.getElementById("student").innerText = "學號：" + studentID;
+
+// ---- 顯示投票結果 ----
+const vote = localStorage.getItem("voteResult");
+
+let text = "";
+if (vote === "A") text = "你投給：韓國瑜";
+if (vote === "B") text = "你投給：蔡英文";
+if (vote === "C") text = "你投給：宋楚瑜";
+
+document.getElementById("result").innerText = text;
+</script>
+
+</body>
+</html>
