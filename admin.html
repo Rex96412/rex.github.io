@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>管理頁面</title>
+<style>
+body {
+    font-family: Arial;
+    background: #f0f4ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background: white;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #e74c3c;
+    color: white;
+}
+
+button:hover {
+    background-color: #c0392b;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>管理頁面</h2>
+    <p>你可以清除所有投票資料</p>
+    <button onclick="clearData()">清除所有票數與投票紀錄</button>
+    <br>
+    <button onclick="location.href='index.html'">回登入頁</button>
+</div>
+
+<script>
+function clearData() {
+    if (confirm("確定要刪除所有票數與投票紀錄嗎？")) {
+        localStorage.removeItem("countA");
+        localStorage.removeItem("countB");
+        localStorage.removeItem("countC");
+
+        // 清除所有投票學號紀錄
+        for (let key in localStorage) {
+            if (key.startsWith("voted_")) {
+                localStorage.removeItem(key);
+            }
+        }
+
+        alert("已清除所有資料！");
+    }
+}
+</script>
+
+</body>
+</html>
