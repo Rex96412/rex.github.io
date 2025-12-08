@@ -1,68 +1,169 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <title>投票結果</title>
-    <style>
-        body {
-            font-family: Arial;
-            background: #eef2ff;
-            text-align: center;
-            padding-top: 80px;
-        }
-        .box {
-            width: 360px;
-            margin: auto;
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 0 12px rgba(0,0,0,0.15);
-        }
-        button {
-            padding: 10px 20px;
-            border: none;
-            background: #4e7cff;
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            margin: 10px;
-        }
-        button:hover {
-            background: #3b64cc;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>投票結果</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f0f4ff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        padding: 20px;
+        margin: 0;
+    }
+
+    .container {
+        background: white;
+        padding: 25px 40px;
+        border-radius: 12px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+    }
+
+    h2 {
+        margin-bottom: 20px;
+    }
+
+    #voteCounts {
+        margin-bottom: 20px;
+        font-size: 18px;
+    }
+
+    #voteCounts p {
+        margin: 8px 0;
+    }
+
+    /* Chart容器限制大小 */
+    #chartContainer {
+        width: 100%;
+        max-width: 500px;  /* 最大寬度 */
+        height: 300px;     /* 固定高度 */
+        margin: 0 auto 20px;
+    }
+
+    button {
+        margin-top: 10px;
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        background-color: #4e7cff;
+        color: white;
+    }
+
+    button:hover {
+        background-color: #3461c9;
+    }
+
+    .btn-secondary {
+        background-color: #95a5a6;
+        margin-left: 10px;
+    }
+
+    .btn-secondary:hover {
+        background-color: #7f8c8d;
+    }
+</style>
 </head>
 <body>
 
-<div class="box">
-    <h2>投票完成！</h2>
+<div class="container">
+    <h2>投票結果</h2>
     <p id="student"></p>
-    <p id="result"></p>
+    <p id="personalVote"></p>
+
+    <div id="voteCounts">
+        <p>韓國瑜票數：<span id="countA">0</span></p>
+        <p>蔡英文票數：<span id="countB">0</span></p>
+        <p>宋楚瑜票數：<span id="countC">0</span></p>
+    </div>
+
+    <div id="chartContainer">
+        <canvas id="voteChart"></canvas>
+    </div>
 
     <button onclick="location.href='vote.html'">⬅ 回投票頁</button>
-    <button onclick="location.href='index.html'">⬅ 回登入頁</button>
+    <button class="btn-secondary" onclick="location.href='index.html'">🏠 回登入頁</button>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// ---- 檢查是否有登入 ----
-const studentID = localStorage.getItem("studentID");
-if (!studentID) {
-    alert("尚未登入，請重新登入！");
-    window.location.href = "login.html";
-}
+    // 檢查是否登入
+    const studentID = localStorage.getItem("studentID");
+    if (!studentID) {
+        alert("請先登入！");
+        window.location.href = "index.html";
+    } else {
+        document.getElementById("student").innerText = "學號：" + studentID;
+    }
 
-// ---- 顯示學號 ----
-document.getElementById("student").innerText = "學號：" + studentID;
+    // 顯示個人投票結果
+    const personalVote = localStorage.getItem("voteResult");
+    if (personalVote === "A") {
+        document.getElementById("personalVote").innerText = "你投給：韓國瑜";
+    } else if (personalVote === "B") {
+        document.getElementById("personalVote").innerText = "你投給：蔡英文";
+    } else if (personalVote === "C") {
+        document.getElementById("personalVote").innerText = "你投給：宋楚瑜";
+    } else {
+        document.getElementById("personalVote").innerText = "你尚未投票";
+    }
 
-// ---- 顯示投票結果 ----
-const vote = localStorage.getItem("voteResult");
+    // 讀票數
+    const countA = parseInt(localStorage.getItem("countA") || 0);
+    const countB = parseInt(localStorage.getItem("countB") || 0);
+    const countC = parseInt(localStorage.getItem("countC") || 0);
 
-let text = "";
-if (vote === "A") text = "你投給：韓國瑜";
-if (vote === "B") text = "你投給：蔡英文";
-if (vote === "C") text = "你投給：宋楚瑜";
+    // 更新數字
+    document.getElementById("countA").innerText = countA;
+    document.getElementById("countB").innerText = countB;
+    document.getElementById("countC").innerText = countC;
 
-document.getElementById("result").innerText = text;
+    // 畫 Chart.js 長條圖
+    const ctx = document.getElementById('voteChart').getContext('2d');
+    const voteChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['韓國瑜','蔡英文','宋楚瑜'],
+            datasets: [{
+                label: '票數',
+                data: [countA, countB, countC],
+                backgroundColor: ['#3498db','#2ecc71','#f1c40f']
+            }]
+        },
+options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+        y: {
+            beginAtZero: true,
+            ticks: {
+                stepSize: 1,  // 強制每格間隔 1
+                callback: function(value) {
+                    return value; // 只顯示整數
+                }
+            }
+        }
+    },
+    plugins: {
+        tooltip: {
+            callbacks: {
+                label: function(context) {
+                    return Math.round(context.raw); // tooltip 也顯示整數
+                }
+            }
+        }
+    }
+}})
+
+    
 </script>
 
 </body>
