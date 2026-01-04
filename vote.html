@@ -141,8 +141,7 @@
         localStorage.setItem("countC", countC);
 
         // ===== 紀錄投票 =====
-        localStorage.setItem("voted_" + studentID, "true");
-        localStorage.setItem("voteResult", vote.value);
+        localStorage.setItem("voted_" + studentID, vote.value);
 
         alert("投票成功！");
         window.location.href = "result.html";
