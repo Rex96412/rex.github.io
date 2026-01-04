@@ -105,7 +105,7 @@
     }
 
     // 顯示個人投票結果
-    const personalVote = localStorage.getItem("voteResult");
+    const personalVote = localStorage.getItem("voted_"+studentID);
     if (personalVote === "A") {
         document.getElementById("personalVote").innerText = "你投給：韓國瑜";
     } else if (personalVote === "B") {
