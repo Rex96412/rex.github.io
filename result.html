@@ -127,7 +127,7 @@
     document.getElementById("countC").innerText = countC;
 
     // 畫 Chart.js 長條圖
-    const ctx = document.getElementById('voteChart').getContext('2d');
+        const ctx = document.getElementById('voteChart').getContext('2d');
     const voteChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -138,30 +138,20 @@
                 backgroundColor: ['#3498db','#2ecc71','#f1c40f']
             }]
         },
-options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-        y: {
-            beginAtZero: true,
-            ticks: {
-                stepSize: 1,  // 強制每格間隔 1
-                callback: function(value) {
-                    return value; // 只顯示整數
+        options: {
+            responsive: true, //自動調節圖表大小
+            maintainAspectRatio: false,//保持長寬比
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                stepSize: 1,      
+                precision: 0,     // 確保顯示為整數。小數點為0
+                    }
                 }
             }
         }
-    },
-    plugins: {
-        tooltip: {
-            callbacks: {
-                label: function(context) {
-                    return Math.round(context.raw); // tooltip 也顯示整數
-                }
-            }
-        }
-    }
-}})
+    });
 
     
 </script>
