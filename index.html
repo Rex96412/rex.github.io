@@ -52,7 +52,7 @@ button {
 
 <script>
 function login() {
-    const id = document.getElementById("studentID").value;
+    const id = document.getElementById("studentID").value.trim();
 
     if (id.trim() === "") {
         alert("請輸入學號！");
@@ -63,6 +63,19 @@ function login() {
         window.location.href = "admin.html"; // 跳轉到管理頁
         return;
     }
+
+    const idRule = /^[0-9]+$/; // /^[0-9]+$/ 表示從頭到尾只能是數字 0-9
+
+    if (!idRule.test(id)) {
+        alert("輸入錯誤！請輸入數字。");
+        return;
+    }
+    if (localStorage.getItem("voted_" + id)) { 
+        alert("你已經投過票！");
+        window.location.href = "result.html"; 
+        return;//直接跳轉到結果
+    }
+
 
     localStorage.setItem("studentID", id);
     window.location.href = "vote.html";
