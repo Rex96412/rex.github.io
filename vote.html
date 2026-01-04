@@ -81,11 +81,12 @@
         <button type="button" onclick="submitVote()">提交投票</button>
     </form>
 
+
     <button class="btn-secondary" onclick="location.href='index.html'">⬅ 回登入頁</button>
 </div>
 
 <script>
-    // 檢查是否登入
+    // ===== 檢查是否登入 =====
     const studentID = localStorage.getItem("studentID");
     if (!studentID) {
         alert("請先登入！");
@@ -94,40 +95,56 @@
         document.getElementById("student").innerText = "學號：" + studentID;
     }
 
+    // ===== 投票截止時間設定 =====
+    // ⚠ 只要改這行時間
+    const voteDeadline = new Date("2026-01-31T23:59:59");
+
     function submitVote() {
+        const now = new Date();
+
+        // ❌ 已截止
+        if (now > voteDeadline) {
+            alert("投票已截止，無法再投票！");
+            return;
+        }
+
         const vote = document.querySelector('input[name="vote"]:checked');
         if (!vote) {
             alert("請先選擇候選人！");
             return;
         }
 
-        // 防止同一學號重複投票
+        // 🔔 投票確認視窗
+        const ok = confirm(
+            "你確定要投給此候選人嗎？\n投票後將無法更改！"
+        );
+        if (!ok) return;
+
+        // ❌ 防止重複投票
         if (localStorage.getItem("voted_" + studentID)) {
             alert("你已經投過票！");
             return;
         }
 
-        // 讀取現有票數
+        // ===== 讀取票數 =====
         let countA = parseInt(localStorage.getItem("countA") || 0);
         let countB = parseInt(localStorage.getItem("countB") || 0);
         let countC = parseInt(localStorage.getItem("countC") || 0);
 
-        // 更新票數
-        if (vote.value === "A") countA += 1;
-        if (vote.value === "B") countB += 1;
-        if (vote.value === "C") countC += 1;
+        // ===== 加票 =====
+        if (vote.value === "A") countA++;
+        if (vote.value === "B") countB++;
+        if (vote.value === "C") countC++;
 
         localStorage.setItem("countA", countA);
         localStorage.setItem("countB", countB);
         localStorage.setItem("countC", countC);
 
-        // 記錄學號已投票
+        // ===== 紀錄投票 =====
         localStorage.setItem("voted_" + studentID, "true");
-
-        // 記錄個人投票結果
         localStorage.setItem("voteResult", vote.value);
 
-        // 導向結果頁
+        alert("投票成功！");
         window.location.href = "result.html";
     }
 </script>
