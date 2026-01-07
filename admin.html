@@ -56,12 +56,12 @@ function clearData() {
         localStorage.removeItem("countB");
         localStorage.removeItem("countC");
 
-        // 清除所有投票學號紀錄
-        for (let key in localStorage) {
+        // 取得所有的標籤名稱
+        Object.keys(localStorage).forEach(key => {
             if (key.startsWith("voted_")) {
                 localStorage.removeItem(key);
             }
-        }
+        });
 
         alert("已清除所有資料！");
     }
